@@ -1,37 +1,35 @@
-const mongoose = require("mongoose");
+const express = require("express");
+const bodyParser = require("body-parser");
 
-mongoose
-  .connect("mongodb://localhost:27017/TodoApp")
-  .then(() => console.log("MongoDB connected"))
-  .catch(err => console.log("Unable to connect MongoDB"));
+// DB
+const mongoose = require("./db/mongoose");
+const Todo = require("./models/Todo");
+const User = require("./models/User");
 
-const Todo = mongoose.model("Todo", {
-  text: {
-    type: String
-  },
-  completed: {
-    type: Boolean
-  },
-  completedAt: {
-    type: Number
-  }
+// Server
+
+const app = express();
+
+// Middleware
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
+// Root route
+app.get("/", (req, res) => {
+  res.send("Hello");
 });
 
-const newTodo = new Todo({
-  text: "Learn Algorithmic Thinking"
+// POST request
+app.post("/todos", (req, res) => {
+  const newTodo = new Todo({
+    text: req.body.text
+  });
+  newTodo
+    .save()
+    .then(todo => res.json({ success: true, todo }))
+    .catch(err => res.status(400).json({ success: false, err }));
 });
 
-newTodo
-  .save()
-  .then(todo => console.log("Saved todo", todo))
-  .catch(err => console.log("Unable to save todo"));
+const port = process.env.PORT || 3000;
 
-const anotherTodo = new Todo({
-  text: "Become a great software engineer",
-  completed: false
-});
-
-anotherTodo
-  .save()
-  .then(todo => console.log("Saved todo", todo))
-  .catch(err => console.log("Unable to save todo"));
+app.listen(port, () => console.log(`Server listening on port ${port}`));
