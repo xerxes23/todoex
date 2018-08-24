@@ -71,6 +71,31 @@ app.delete("/todos/:id", (req, res) => {
     .catch(error => res.status(404).json({ error }));
 });
 
+// PATCH /todos/:id
+app.patch("/todos/:id", (req, res) => {
+  const id = req.params.id;
+  if (!ObjectId.isValid(id)) {
+    return res.status(404).json({ error: "Not a valid ID" });
+  }
+  Todo.findById(id)
+    .then(todo => {
+      if (!todo) {
+        return res.status(404).json({ error: "No such todo was found" });
+      }
+      const updatedTodo = {
+        text: req.body.text ? req.body.text : todo.text,
+        completed: req.body.completed ? req.body.completed : todo.completed,
+        completedAt: req.body.completed
+          ? new Date().getTime()
+          : todo.completedAt
+      };
+      Todo.findByIdAndUpdate(id, updatedTodo, { new: true }).then(todo =>
+        res.status(200).json({ success: true, todo })
+      );
+    })
+    .catch(error => res.json({ error }));
+});
+
 app.listen(port, () => console.log(`Server listening on port ${port}`));
 
 module.exports = app;

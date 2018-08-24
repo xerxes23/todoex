@@ -119,4 +119,24 @@ describe("DELETE /todos/:id", () => {
       })
       .end(done);
   });
+
+  it("should return 404 if todo not found", done => {
+    request(app)
+      .delete(`/todos/${validNonexistentId}`)
+      .expect(404)
+      .expect(res => {
+        expect(res.body).toEqual({ error: "No such todo was found" });
+      })
+      .end(done);
+  });
+
+  it("should return 404 if object id is invalid", done => {
+    request(app)
+      .delete(`/todos/123abc`)
+      .expect(404)
+      .expect(res => {
+        expect(res.body).toEqual({ error: "Not a valid ID" });
+      })
+      .end(done);
+  });
 });
