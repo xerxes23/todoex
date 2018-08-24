@@ -2,6 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 
 // DB
+const { ObjectId } = require("mongodb");
 const mongoose = require("./db/mongoose");
 const Todo = require("./models/Todo");
 const User = require("./models/User");
@@ -35,6 +36,22 @@ app.get("/todos", (req, res) => {
   Todo.find({})
     .then(todos => res.status(200).json({ success: true, todos }))
     .catch(err => res.status(400).json({ success: false, error: err }));
+});
+
+// GET /todos/:id
+app.get("/todos/:id", (req, res) => {
+  const id = req.params.id;
+  if (!ObjectId.isValid(id)) {
+    return res.status(404).json({ error: "Not a valid ID" });
+  }
+  Todo.findById()
+    .then(todo => {
+      if (!todo) {
+        res.status(404).json({ error: "No todo found" });
+      }
+      return res.status(200).json({ success: true, todo });
+    })
+    .catch(error => res.json({ error }));
 });
 
 const port = process.env.PORT || 3000;
