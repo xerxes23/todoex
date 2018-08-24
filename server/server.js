@@ -10,6 +10,7 @@ const User = require("./models/User");
 // Server
 
 const app = express();
+const port = process.env.PORT || 3000;
 
 // Middleware
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -53,8 +54,6 @@ app.get("/todos/:id", (req, res) => {
     })
     .catch(error => res.status(404).json({ error }));
 });
-
-const port = process.env.PORT || 3000;
 
 app.listen(port, () => console.log(`Server listening on port ${port}`));
 

@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 mongoose
   .connect(
-    "mongodb://localhost:27017/TodoApp",
+    process.env.MONGODB_URI || "mongodb://localhost:27017/TodoApp",
     { useNewUrlParser: true }
   )
   .then(() => console.log("MongoDB connected"))
