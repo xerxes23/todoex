@@ -44,14 +44,14 @@ app.get("/todos/:id", (req, res) => {
   if (!ObjectId.isValid(id)) {
     return res.status(404).json({ error: "Not a valid ID" });
   }
-  Todo.findById()
+  Todo.findById(id)
     .then(todo => {
       if (!todo) {
-        res.status(404).json({ error: "No todo found" });
+        return res.status(404).json({ error: "No todo found" });
       }
       return res.status(200).json({ success: true, todo });
     })
-    .catch(error => res.json({ error }));
+    .catch(error => res.status(404).json({ error }));
 });
 
 const port = process.env.PORT || 3000;
