@@ -19,14 +19,21 @@ app.get("/", (req, res) => {
   res.send("Hello");
 });
 
-// POST request
+// POST /todos
 app.post("/todos", (req, res) => {
   const newTodo = new Todo({
     text: req.body.text
   });
   newTodo
     .save()
-    .then(todo => res.json({ success: true, todo }))
+    .then(todo => res.status(200).json({ success: true, todo }))
+    .catch(err => res.status(400).json({ success: false, err }));
+});
+
+// GET /todos
+app.get("/todos", (req, res) => {
+  Todo.find({})
+    .then(todos => res.status(200).json({ success: true, todos }))
     .catch(err => res.status(400).json({ success: false, err }));
 });
 
