@@ -85,9 +85,7 @@ app.patch("/todos/:id", (req, res) => {
       const updatedTodo = {
         text: req.body.text ? req.body.text : todo.text,
         completed: req.body.completed ? req.body.completed : todo.completed,
-        completedAt: req.body.completed
-          ? new Date().getTime()
-          : todo.completedAt
+        completedAt: req.body.completed ? new Date().getTime() : null
       };
       Todo.findByIdAndUpdate(id, updatedTodo, { new: true }).then(todo =>
         res.status(200).json({ success: true, todo })
