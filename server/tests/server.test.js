@@ -108,3 +108,15 @@ describe("GET /todos/:id", () => {
       .end(done);
   });
 });
+
+describe("DELETE /todos/:id", () => {
+  it("should find and delete todo", done => {
+    request(app)
+      .delete(`/todos/${todos[0]._id.toHexString()}`)
+      .expect(200)
+      .expect(res => {
+        expect(res.body.todo._id).toBe(todos[0]._id.toHexString());
+      })
+      .end(done);
+  });
+});
