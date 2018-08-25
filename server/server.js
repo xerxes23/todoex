@@ -1,5 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const _ = require("lodash");
 
 // DB
 require("./config/config");
@@ -93,6 +94,16 @@ app.patch("/todos/:id", (req, res) => {
       );
     })
     .catch(error => res.json({ error }));
+});
+
+// POST /users
+app.post("/users", (req, res) => {
+  const body = _.pick(req.body, ["email", "password"]);
+  const newUser = new User(body);
+  newUser
+    .save()
+    .then(user => res.status(200).json({ success: true, user }))
+    .catch(error => res.status(400).json({ error }));
 });
 
 app.listen(port, () => console.log(`Server listening on port ${port}`));
