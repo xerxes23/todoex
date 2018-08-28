@@ -22,12 +22,14 @@ const User = require("./../server/models/User");
 //   console.log('Todo', todo);
 // });
 
-// Todo.findById(id).then((todo) => {
-//   if (!todo) {
-//     return console.log('Id not found');
-//   }
-//   console.log('Todo By Id', todo);
-// }).catch((e) => console.log(e));
+Todo.findById(id)
+  .then(todo => {
+    if (!todo) {
+      return console.log("Id not found");
+    }
+    console.log("Todo By Id", todo);
+  })
+  .catch(e => console.log(e));
 
 User.findById("57bdb0fcdedf88540bfa2d66").then(
   user => {
