@@ -25,9 +25,10 @@ app.get("/", (req, res) => {
 });
 
 // POST /todos
-app.post("/todos", (req, res) => {
+app.post("/todos", authenticate, (req, res) => {
   const newTodo = new Todo({
-    text: req.body.text
+    text: req.body.text,
+    _creator: req.user._id
   });
   newTodo
     .save()
@@ -36,19 +37,22 @@ app.post("/todos", (req, res) => {
 });
 
 // GET /todos
-app.get("/todos", (req, res) => {
-  Todo.find({})
+app.get("/todos", authenticate, (req, res) => {
+  Todo.find({ _creator: req.user._id })
     .then(todos => res.status(200).json({ success: true, todos }))
     .catch(err => res.status(400).json({ success: false, error: err }));
 });
 
 // GET /todos/:id
-app.get("/todos/:id", (req, res) => {
+app.get("/todos/:id", authenticate, (req, res) => {
   const id = req.params.id;
   if (!ObjectId.isValid(id)) {
     return res.status(404).json({ error: "Not a valid ID" });
   }
-  Todo.findById(id)
+  Todo.findOne({
+    _id: id,
+    _creator: req.user._id
+  })
     .then(todo => {
       if (!todo) {
         return res.status(404).json({ error: "No todo found" });
@@ -59,12 +63,15 @@ app.get("/todos/:id", (req, res) => {
 });
 
 // DELETE /todos
-app.delete("/todos/:id", (req, res) => {
+app.delete("/todos/:id", authenticate, (req, res) => {
   const id = req.params.id;
   if (!ObjectId.isValid(id)) {
     return res.status(404).json({ error: "Not a valid ID" });
   }
-  Todo.findByIdAndRemove(id)
+  Todo.findOneAndRemove({
+    _id: id,
+    _creator: req.user._id
+  })
     .then(todo => {
       if (!todo) {
         return res.status(404).json({ error: "No such todo was found" });
@@ -75,12 +82,15 @@ app.delete("/todos/:id", (req, res) => {
 });
 
 // PATCH /todos/:id
-app.patch("/todos/:id", (req, res) => {
+app.patch("/todos/:id", authenticate, (req, res) => {
   const id = req.params.id;
   if (!ObjectId.isValid(id)) {
     return res.status(404).json({ error: "Not a valid ID" });
   }
-  Todo.findById(id)
+  Todo.findOne({
+    _id: id,
+    _creator: req.user._id
+  })
     .then(todo => {
       if (!todo) {
         return res.status(404).json({ error: "No such todo was found" });
